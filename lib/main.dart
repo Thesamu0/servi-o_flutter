@@ -14,10 +14,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ListScreen(),
+      home: HomePage(),
     );
   }
 }
+
+List<Conta> listaConta = List<Conta>();
 
 class ListScreen extends StatefulWidget {
   @override
@@ -26,8 +28,6 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   @override
-  List<Conta> listaConta = List<Conta>();
-
   _getUsers() {
     API.getUsers().then((response) {
       setState(() {
@@ -56,6 +56,61 @@ class _ListScreenState extends State<ListScreen> {
         itemBuilder: (context, index) {
           return ListTile(title: Text(listaConta[index].login));
         },
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  var login_cont = new TextEditingController();
+  var senha_cont = new TextEditingController();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Página Inicial"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: login_cont,
+              style: TextStyle(color: Colors.black, fontSize: 18),
+              decoration: InputDecoration(labelText: "Login"),
+            ),
+            TextField(
+              controller: senha_cont,
+              obscureText: true,
+              style: TextStyle(color: Colors.black, fontSize: 18),
+              decoration: InputDecoration(labelText: "Senha"),
+            ),
+            Divider(),
+            RaisedButton(
+              child: Text("Cadastrar"),
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20),
+              ),
+              onPressed: () {
+                listaConta
+                    .add(Conta(login: login_cont.text, senha: senha_cont.text));
+                senha_cont.clear();
+                login_cont.clear();
+              },
+            ),
+            Divider(),
+            RaisedButton(
+              child: Text("Ver Usuários Cadastrados"),
+              shape: new RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(20),
+              ),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ListScreen()));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
